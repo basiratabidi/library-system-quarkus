@@ -23,7 +23,6 @@ public class BookController {
 
 
     @GET
-
     public Response getAllBoook(){
         
         List<BookDTO>books= bookService.getAllBooks();
@@ -45,8 +44,8 @@ public class BookController {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteBook(@PathParam("id") String id, BookDTO book){
-        BookDTO deletedBook= bookService.deleteBook(id, book);
+    public Response deleteBook(@PathParam("id") String id){
+        BookDTO deletedBook= bookService.deleteBook(id);
         return Response.ok(deletedBook).build();    
 
     }

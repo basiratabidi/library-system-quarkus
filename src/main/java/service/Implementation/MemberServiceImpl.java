@@ -25,20 +25,19 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDTO registerMember(MemberDTO member) {
-        if (member.id == null || member.id.isEmpty()) {
-            member.id = UUID.randomUUID().toString();
-        } else {
-            throw new RuntimeException("Member ID is required for registration.");
+        if (member.id != null || !member.id.isEmpty()) {
+               throw new RuntimeException("Member ID is required for registration.");
         }
+        member.id = UUID.randomUUID().toString();
         members.put(member.id, member);
         return member;
     }
 
     @Override
-    public MemberDTO removeMember(MemberDTO member) {
-        if (!members.containsKey(member.id)) {
-            throw new MemberNotFoundException("Member with ID " + member.id + " does not exist.");
+    public MemberDTO removeMember(String id) {
+        if (!members.containsKey(id)) {
+            throw new MemberNotFoundException("Member with ID " + id + " does not exist.");
         }
-        return members.remove(member.id);
+        return members.remove(id);
     }
 }

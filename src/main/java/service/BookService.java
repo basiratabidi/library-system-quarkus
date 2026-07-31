@@ -7,6 +7,7 @@ public interface BookService {
     List<BookDTO> getAllBooks();
     BookDTO addBook(BookDTO book);
     BookDTO updateBook(String id, BookDTO book);
-    BookDTO deleteBook(String id, BookDTO book);
+    BookDTO deleteBook(String id);
     BookDTO TrackAvailability(String id);
+    BookDTO getBookById(String id);
 }

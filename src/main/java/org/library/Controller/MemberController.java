@@ -30,8 +30,9 @@ public class MemberController {
     }
 
     @DELETE
-    public Response removeMember(MemberDTO member) {
-        MemberDTO removedMember = memberService.removeMember(member);
+    @Path("/{id}")
+    public Response removeMember(@PathParam("id")String id) {
+        MemberDTO removedMember = memberService.removeMember(id);
         return Response.ok(removedMember).build();
     }
 

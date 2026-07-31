@@ -38,7 +38,7 @@ public class BookServiceImpl implements BookService {
         return book;    
     }
     @Override
-    public BookDTO deleteBook(String id, BookDTO book) {
+    public BookDTO deleteBook(String id) {
         if (!books.containsKey(id)) {
             throw new BookNotFoundException("Book with ID " + id + " does not exist.");
         }
@@ -50,6 +50,14 @@ public class BookServiceImpl implements BookService {
         if (book != null) {
             book.isAvailable = !book.isAvailable;
         }   
+        return book;
+    }
+    @Override
+    public BookDTO getBookById(String id) {
+        BookDTO book = books.get(id);
+        if (book == null) {
+            throw new BookNotFoundException("Book with ID " + id + " does not exist.");
+        }
         return book;
     }
 
