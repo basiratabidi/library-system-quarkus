@@ -1,64 +1,93 @@
 package service.Implementation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+
 import org.library.DTO.BookDTO;
 import org.library.exception.BookNotFoundException;
+
 import service.BookService;
+import org.library.model.Book;
 
 @ApplicationScoped
 public class BookServiceImpl implements BookService {
-    Map<String, BookDTO> books = new HashMap<>();
 
     @Override
     public List<BookDTO> getAllBooks() {
-        return new ArrayList<>(books.values());
-    }
-    @Override
-    public BookDTO addBook(BookDTO book) {
-        book.id = UUID.randomUUID().toString();
-        book.isAvailable = true;
-        books.put(book.id, book);
-        return book;
+       return Book.<Book>listAll().stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public BookDTO updateBook(String id, BookDTO book) {
-    
-        if (!books.containsKey(id)) {
+    @Transactional
+    public BookDTO addBook(BookDTO dto) {
+
+        Book books = new Book();
+        books.id= UUID.randomUUID().toString();
+        books.title= dto.title;
+        books.author= dto.author;
+        books.persist();
+        books.isAvailable= true;
+
+        return toDTO(books);
+    }
+
+    @Override
+    @Transactional
+    public BookDTO updateBook(String id, BookDTO dto) {
+        Book books = Book.findById(id);
+        if (books == null) {
             throw new BookNotFoundException("Book with ID " + id + " does not exist.");
         }
-        book.id= id;
-        books.put(book.id, book);     
-        return book;    
+        books.title= dto.title;
+        books.author= dto.author;
+        return toDTO(books);    
     }
+
     @Override
+    @Transactional
     public BookDTO deleteBook(String id) {
-        if (!books.containsKey(id)) {
+       Book books = Book.findById(id);
+        if (books == null) {
             throw new BookNotFoundException("Book with ID " + id + " does not exist.");
         }
-        return books.remove(id);  
+        BookDTO result =toDTO(books);
+        books.delete();  
+        return result;
     }
+
     @Override
+    @Transactional
     public BookDTO TrackAvailability(String id) {
-        BookDTO book = books.get(id);
-        if (book != null) {
-            book.isAvailable = !book.isAvailable;
+        Book book = Book.findById(id);
+        if (book == null) {
+            throw new BookNotFoundException("book with ID"+id+"not Found");
         }   
-        return book;
+        book.isAvailable= !book.isAvailable;
+        return toDTO(book);
     }
     @Override
+    @Transactional
     public BookDTO getBookById(String id) {
-        BookDTO book = books.get(id);
+        Book book = Book.findById(id);
         if (book == null) {
             throw new BookNotFoundException("Book with ID " + id + " does not exist.");
         }
-        return book;
+        return toDTO(book);
+    }
+
+    private BookDTO toDTO(Book book){
+        BookDTO dto = new BookDTO();
+        dto.id = book.id;
+        dto.title = book.title;
+        dto.author= book.author;
+        dto.isAvailable = book.isAvailable;
+        return dto;
     }
 
 }

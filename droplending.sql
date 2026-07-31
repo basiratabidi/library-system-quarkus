@@ -1,0 +1,3 @@
+CONNECT TO libdb;
+DROP TABLE lending;
+CONNECT RESET;
