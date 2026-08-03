@@ -1,0 +1,5 @@
+CONNECT TO libdb;
+DELETE FROM lending;
+DELETE FROM book;
+DELETE FROM member;
+CONNECT RESET;
