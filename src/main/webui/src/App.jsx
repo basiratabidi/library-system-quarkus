@@ -1,42 +1,57 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Nav from './components/Nav'
-import Cursor from './components/Cursor'
 import Footer from './components/Footer'
+import Cursor from './components/Cursor'
+
 import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import BooksPage from './pages/BooksPage'
 import MembersPage from './pages/MembersPage'
 import LendingPage from './pages/LendingPage'
-import './index.css'
-
-const routes = { welcome: LandingPage, home: HomePage, books: BooksPage, members: MembersPage, lending: LendingPage }
-
-function getRoute() {
-  const hash = window.location.hash.replace('#/', '')
-  return routes[hash] ? hash : 'home'
-}
 
 export default function App() {
-  const [route, setRoute] = useState(getRoute())
+  const [route, setRoute] = useState(() => {
+    return window.location.hash.replace('#/', '') || 'welcome'
+  })
+
   useEffect(() => {
-    const onHashChange = () => setRoute(getRoute())
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
+    const handleHashChange = () => {
+      const currentRoute = window.location.hash.replace('#/', '').split('?')[0]
+      setRoute(currentRoute || 'welcome')
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
-  const Page = routes[route]
-  const isLanding = route === 'welcome'
+  const renderPage = () => {
+    switch (route) {
+      case 'home':
+        return <HomePage />
+      case 'books':
+        return <BooksPage />
+      case 'members':
+        return <MembersPage />
+      case 'lending':
+        return <LendingPage />
+      case 'welcome':
+      default:
+        return <LandingPage />
+    }
+  }
+
+  const isLanding = route === 'welcome' || route === ''
 
   return (
-    <>
+    <div className="app-shell">
       <Cursor />
-      <Header />
-      <Nav route={route} />
-      <main className={isLanding ? 'main-flush' : ''}>
-        <Page />
+      {!isLanding && <Header />}
+      {!isLanding && <Nav route={route} />}
+      <main className="main-content">
+        {renderPage()}
       </main>
       {!isLanding && <Footer />}
-    </>
+    </div>
   )
 }

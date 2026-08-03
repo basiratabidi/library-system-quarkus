@@ -56,7 +56,10 @@ export default function BooksPage() {
   const [editTitle, setEditTitle] = useState('')
   const [editAuthor, setEditAuthor] = useState('')
   const [deletingId, setDeletingId] = useState(null)
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1] || '')
+    return params.get('q') || ''
+  })
   const [sort, setSort] = useState('title')
 
   const load = () => {

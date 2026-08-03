@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 const tabs = [
   { href: '#/welcome', label: 'Welcome' },
   { href: '#/home', label: 'Front Desk' },
@@ -7,13 +9,30 @@ const tabs = [
 ]
 
 export default function Nav({ route }) {
+  const [open, setOpen] = useState(false)
+
   return (
     <nav className="site-nav">
-      {tabs.map((tab) => (
-        <a key={tab.href} href={tab.href} className={route === tab.href.replace('#/', '') ? 'active' : ''}>
-          {tab.label}
-        </a>
-      ))}
+      <button
+        className="nav-toggle"
+        onClick={() => setOpen(!open)}
+        aria-label="Toggle menu"
+        aria-expanded={open}
+      >
+        ☰
+      </button>
+      <div className={`nav-links ${open ? 'nav-links-open' : ''}`}>
+        {tabs.map((tab) => (
+          <a
+            key={tab.href}
+            href={tab.href}
+            className={`nav-item ${route === tab.href.replace('#/', '') ? 'active' : ''}`}
+            onClick={() => setOpen(false)}
+          >
+            {tab.label}
+          </a>
+        ))}
+      </div>
     </nav>
   )
 }
