@@ -1,17 +1,40 @@
 import { useState, useEffect } from 'react'
 import { booksApi, getBookRating } from '../api'
+import { fetchCoverUrl } from '../lib/covers'
 import { Reveal } from '../components/ui'
 import PageBanner from '../components/PageBanner'
 import {
-  BrassRule, ConfirmDeleteButton, Field, Panel, SearchField,
-  SectionHeading, SortSelect, StampBadge, StarRating, StateNotice, FeedbackBanner, useFeedback,
+  ConfirmDeleteButton, Field, Panel, SearchField,
+  SortSelect, StampBadge, StarRating, StateNotice, FeedbackBanner, useFeedback,
 } from '../components/ui'
 
 function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEditAuthor, onStartEdit, onSaveEdit, onCancelEdit, onDelete, deleting }) {
   const { averageRating, reviewCount } = getBookRating(book.id)
+  const [coverUrl, setCoverUrl] = useState(null)
+  const [coverLoading, setCoverLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchCoverUrl(book.title, book.author).then((url) => {
+      if (!cancelled) {
+        setCoverUrl(url)
+        setCoverLoading(false)
+      }
+    })
+    return () => { cancelled = true }
+  }, [book.title, book.author])
+
   return (
     <div className="book-card">
-      <div className="book-cover">📖</div>
+      <div className="book-cover">
+        {coverLoading ? (
+          <div className="skeleton-bar" style={{ width: '60%', height: '60%' }} />
+        ) : coverUrl ? (
+          <img src={coverUrl} alt={`Cover of ${book.title}`} className="book-cover-img" loading="lazy" />
+        ) : (
+          <span className="book-cover-fallback">📖</span>
+        )}
+      </div>
       <div className="book-card-body">
         {isEditing ? (
           <div className="edit-form">
@@ -173,24 +196,24 @@ export default function BooksPage() {
             <StateNotice title={`No books match "${query}".`} />
           ) : (
             <Reveal>
-            <div className="book-grid">
-              {sorted.map((book) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  isEditing={editingId === book.id}
-                  editTitle={editTitle}
-                  editAuthor={editAuthor}
-                  setEditTitle={setEditTitle}
-                  setEditAuthor={setEditAuthor}
-                  onStartEdit={startEdit}
-                  onSaveEdit={() => saveEdit(book.id)}
-                  onCancelEdit={() => setEditingId(null)}
-                  onDelete={() => handleDelete(book)}
-                  deleting={deletingId === book.id}
-                />
-              ))}
-            </div>
+              <div className="book-grid">
+                {sorted.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    isEditing={editingId === book.id}
+                    editTitle={editTitle}
+                    editAuthor={editAuthor}
+                    setEditTitle={setEditTitle}
+                    setEditAuthor={setEditAuthor}
+                    onStartEdit={startEdit}
+                    onSaveEdit={() => saveEdit(book.id)}
+                    onCancelEdit={() => setEditingId(null)}
+                    onDelete={() => handleDelete(book)}
+                    deleting={deletingId === book.id}
+                  />
+                ))}
+              </div>
             </Reveal>
           )}
         </>

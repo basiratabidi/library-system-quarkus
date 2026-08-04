@@ -3,16 +3,16 @@ import Header from './components/Header'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Cursor from './components/Cursor'
-
 import LandingPage from './pages/LandingPage'
 import HomePage from './pages/HomePage'
 import BooksPage from './pages/BooksPage'
 import MembersPage from './pages/MembersPage'
 import LendingPage from './pages/LendingPage'
+import './index.css'
 
 export default function App() {
   const [route, setRoute] = useState(() => {
-    return window.location.hash.replace('#/', '') || 'welcome'
+    return window.location.hash.replace('#/', '').split('?')[0] || 'welcome'
   })
 
   useEffect(() => {
@@ -20,7 +20,6 @@ export default function App() {
       const currentRoute = window.location.hash.replace('#/', '').split('?')[0]
       setRoute(currentRoute || 'welcome')
     }
-
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
@@ -48,7 +47,7 @@ export default function App() {
       <Cursor />
       {!isLanding && <Header />}
       {!isLanding && <Nav route={route} />}
-      <main className="main-content">
+      <main className={`main-content ${isLanding ? 'main-content--landing' : ''}`}>
         {renderPage()}
       </main>
       {!isLanding && <Footer />}

@@ -163,11 +163,19 @@ export function FeedbackBanner({ feedback, onClose }) {
     </div>
   )
 }
+
 export function Reveal({ children, className = '' }) {
   const ref = useRef(null)
   useEffect(() => {
     const el = ref.current
     if (!el) return
+
+    const rect = el.getBoundingClientRect()
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('in')
+      return
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
