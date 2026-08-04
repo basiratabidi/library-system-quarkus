@@ -5,5 +5,6 @@ public class BookDTO {
     public String title;
     public String author;
     public boolean isAvailable;
+    public String coverUrl;
 
 }
