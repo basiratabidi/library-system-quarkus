@@ -69,6 +69,7 @@ Easily start your REST Web Services
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
 
 
+```shell script
 ├── client/
 │   ├── GoogleBooksClient.java
 │   ├── GoogleBooksResponse.java
@@ -76,17 +77,17 @@ Easily start your REST Web Services
 ├── org/library/
 │   ├── GreetingResource.java
 │   ├── Controller/
-│   │   ├── AuthController.java          (new)
+│   │   ├── AuthController.java          
 │   │   ├── BookController.java
 │   │   ├── LendingController.java
 │   │   └── MemberController.java
 │   ├── DTO/
-│   │   ├── AuthResponse.java            (new)
+│   │   ├── AuthResponse.java           
 │   │   ├── BookDTO.java
 │   │   ├── LendingDTO.java
-│   │   ├── LoginRequest.java            (new)
+│   │   ├── LoginRequest.java            
 │   │   ├── MemberDTO.java
-│   │   └── SignupRequest.java           (new)
+│   │   └── SignupRequest.java          
 │   ├── exception/
 │   │   ├── AlreadyLentExpection.java
 │   │   ├── BookNotFoundException.java
@@ -97,27 +98,27 @@ Easily start your REST Web Services
 │       ├── Book.java
 │       ├── Lending.java
 │       ├── Member.java
-│       └── User.java                    (new)
+│       └── User.java                    
 └── service/
     ├── BookService.java
     ├── LendingService.java
     ├── MemberService.java
-    ├── UserService.java                 (new)
+    ├── UserService.java                
     └── Implementation/
         ├── BookServiceImpl.java
         ├── LendingServiceImpl.java
         ├── MemberServiceImpl.java
-        └── UserServiceImpl.java         (new)
+        └── UserServiceImpl.java        
 
 src/main/resources/
 ├── application.properties
 ├── seed.sql
-├── privateKey.pem                       (new, generated via openssl)
-└── publicKey.pem                        (new, generated via openssl)
+├── privateKey.pem                       
+└── publicKey.pem                       
 
 src/main/webui/src/
-├── App.jsx                              (edit: 2 new routes)
-├── api.js                               (edit: authApi + auth header)
+├── App.jsx                              
+├── api.js                               
 ├── index.css
 ├── main.jsx
 ├── assets/
@@ -125,7 +126,7 @@ src/main/webui/src/
 │   ├── Cursor.jsx
 │   ├── Footer.jsx
 │   ├── Header.jsx
-│   ├── Nav.jsx                          (edit: 2 new nav tabs)
+│   ├── Nav.jsx                        
 │   ├── PageBanner.jsx
 │   └── ui.jsx
 └── pages/
@@ -133,6 +134,7 @@ src/main/webui/src/
     ├── HomePage.jsx
     ├── LandingPage.jsx
     ├── LendingPage.jsx
-    ├── LoginPage.jsx                    (new)
+    ├── LoginPage.jsx                    
     ├── MembersPage.jsx
-    └── SignupPage.jsx                   (new)
+    └── SignupPage.jsx                   
+```
