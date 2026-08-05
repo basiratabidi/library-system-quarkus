@@ -67,3 +67,72 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+├── client/
+│   ├── GoogleBooksClient.java
+│   ├── GoogleBooksResponse.java
+│   └── GoogleBooksService.java
+├── org/library/
+│   ├── GreetingResource.java
+│   ├── Controller/
+│   │   ├── AuthController.java          (new)
+│   │   ├── BookController.java
+│   │   ├── LendingController.java
+│   │   └── MemberController.java
+│   ├── DTO/
+│   │   ├── AuthResponse.java            (new)
+│   │   ├── BookDTO.java
+│   │   ├── LendingDTO.java
+│   │   ├── LoginRequest.java            (new)
+│   │   ├── MemberDTO.java
+│   │   └── SignupRequest.java           (new)
+│   ├── exception/
+│   │   ├── AlreadyLentExpection.java
+│   │   ├── BookNotFoundException.java
+│   │   ├── GlobalExceptionMapper.java
+│   │   ├── LendingNotFoundException.java
+│   │   └── MemberNotFoundException.java
+│   └── model/
+│       ├── Book.java
+│       ├── Lending.java
+│       ├── Member.java
+│       └── User.java                    (new)
+└── service/
+    ├── BookService.java
+    ├── LendingService.java
+    ├── MemberService.java
+    ├── UserService.java                 (new)
+    └── Implementation/
+        ├── BookServiceImpl.java
+        ├── LendingServiceImpl.java
+        ├── MemberServiceImpl.java
+        └── UserServiceImpl.java         (new)
+
+src/main/resources/
+├── application.properties
+├── seed.sql
+├── privateKey.pem                       (new, generated via openssl)
+└── publicKey.pem                        (new, generated via openssl)
+
+src/main/webui/src/
+├── App.jsx                              (edit: 2 new routes)
+├── api.js                               (edit: authApi + auth header)
+├── index.css
+├── main.jsx
+├── assets/
+├── components/
+│   ├── Cursor.jsx
+│   ├── Footer.jsx
+│   ├── Header.jsx
+│   ├── Nav.jsx                          (edit: 2 new nav tabs)
+│   ├── PageBanner.jsx
+│   └── ui.jsx
+└── pages/
+    ├── BooksPage.jsx
+    ├── HomePage.jsx
+    ├── LandingPage.jsx
+    ├── LendingPage.jsx
+    ├── LoginPage.jsx                    (new)
+    ├── MembersPage.jsx
+    └── SignupPage.jsx                   (new)

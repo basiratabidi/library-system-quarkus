@@ -5,20 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GoogleBooksResponse {
-    public List<Item> items;
+    public List<Doc> docs;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Item {
-        public VolumeInfo volumeInfo;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class VolumeInfo {
-        public ImageLinks imageLinks;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ImageLinks {
-        public String thumbnail;
+    public static class Doc {
+        public Long cover_i;
     }
 }

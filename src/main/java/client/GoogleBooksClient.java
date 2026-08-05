@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 public interface GoogleBooksClient {
 
     @GET
-    @Path("/v1/volumes")
+    @Path("/search.json")
     @Produces(MediaType.APPLICATION_JSON)
-    GoogleBooksResponse searchByIsbn(@QueryParam("q") String query);
+    GoogleBooksResponse search(@QueryParam("title") String title, @QueryParam("author") String author, @QueryParam("limit") int limit);
 }

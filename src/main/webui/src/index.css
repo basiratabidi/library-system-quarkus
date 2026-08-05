@@ -570,15 +570,10 @@ a {
   box-shadow: var(--shadow-lg);
 }
 
-.book-cover {
-  font-size: 2.5rem;
-  background-color: var(--bg-surface);
-  height: 130px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border-color);
+.book-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .book-title {
@@ -840,12 +835,17 @@ tr:last-child td {
 }
 
 /* ---------- book cover images ---------- */
-.book-cover { padding: 0; overflow: hidden; }
-.book-cover-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.book-cover {
+  font-size: 2.5rem;
+  background-color: var(--bg-surface);
+  aspect-ratio: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-color);
 }
+
 .book-cover-fallback {
   font-size: 2.4rem;
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { booksApi, getBookRating } from '../api'
-import { fetchCoverUrl } from '../lib/covers'
 import { Reveal } from '../components/ui'
 import PageBanner from '../components/PageBanner'
 import {
@@ -10,27 +9,12 @@ import {
 
 function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEditAuthor, onStartEdit, onSaveEdit, onCancelEdit, onDelete, deleting }) {
   const { averageRating, reviewCount } = getBookRating(book.id)
-  const [coverUrl, setCoverUrl] = useState(null)
-  const [coverLoading, setCoverLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-    fetchCoverUrl(book.title, book.author).then((url) => {
-      if (!cancelled) {
-        setCoverUrl(url)
-        setCoverLoading(false)
-      }
-    })
-    return () => { cancelled = true }
-  }, [book.title, book.author])
 
   return (
     <div className="book-card">
       <div className="book-cover">
-        {coverLoading ? (
-          <div className="skeleton-bar" style={{ width: '60%', height: '60%' }} />
-        ) : coverUrl ? (
-          <img src={coverUrl} alt={`Cover of ${book.title}`} className="book-cover-img" loading="lazy" />
+        {book.coverUrl ? (
+          <img src={book.coverUrl} alt={`Cover of ${book.title}`} className="book-cover-img" loading="lazy" />
         ) : (
           <span className="book-cover-fallback">📖</span>
         )}
@@ -84,6 +68,10 @@ export default function BooksPage() {
     return params.get('q') || ''
   })
   const [sort, setSort] = useState('title')
+
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 12
+  useEffect(() => { setPage(1) }, [query, sort])
 
   const load = () => {
     setLoading(true)
@@ -144,6 +132,9 @@ export default function BooksPage() {
     return 0
   })
 
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE))
+  const paged = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
   return (
     <div>
       <PageBanner crumb="Books" title="The Catalog" />
@@ -197,7 +188,7 @@ export default function BooksPage() {
           ) : (
             <Reveal>
               <div className="book-grid">
-                {sorted.map((book) => (
+                {paged.map((book) => (
                   <BookCard
                     key={book.id}
                     book={book}
@@ -214,6 +205,26 @@ export default function BooksPage() {
                   />
                 ))}
               </div>
+
+              {pageCount > 1 ? (
+                <div className="toolbar-row" style={{ justifyContent: 'center', marginTop: '1.5rem' }}>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
+                    ← Prev
+                  </button>
+                  <span className="count-tag">Page {page} of {pageCount}</span>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+                    disabled={page === pageCount}
+                  >
+                    Next →
+                  </button>
+                </div>
+              ) : null}
             </Reveal>
           )}
         </>
