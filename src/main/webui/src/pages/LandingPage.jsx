@@ -11,7 +11,6 @@ export default function LandingPage() {
   const dotRef = useRef(null)
 
   useEffect(() => {
-    // ---- custom cursor (dot follows instantly, ring lags via lerp) ----
     let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0
     const dot = dotRef.current
     const ring = ringRef.current
@@ -39,7 +38,6 @@ export default function LandingPage() {
       el.addEventListener('mouseleave', removeHover)
     })
 
-    // ---- particle canvas ----
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
     let particles = []
@@ -78,7 +76,6 @@ export default function LandingPage() {
     }
     drawParticles()
 
-    // ---- scroll reveal ----
     const revealEls = document.querySelectorAll('.landing .reveal')
     const revealObserver = new IntersectionObserver(
       (entries) => {
@@ -93,7 +90,6 @@ export default function LandingPage() {
     )
     revealEls.forEach((el) => revealObserver.observe(el))
 
-    // ---- stat counters ----
     const statNums = document.querySelectorAll('.landing .stat-num')
     const statObserver = new IntersectionObserver(
       (entries) => {
@@ -118,7 +114,6 @@ export default function LandingPage() {
     )
     statNums.forEach((el) => statObserver.observe(el))
 
-    // cleanup on unmount - prevents leaks when navigating away
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('resize', resizeCanvas)
@@ -133,7 +128,6 @@ export default function LandingPage() {
     }
   }, [])
 
-  // letter-split hero title - each char gets staggered animation-delay
   const chars = HERO_TEXT.split('').map((ch, i) => {
     if (ch === ' ') return ' '
     return (
@@ -145,6 +139,8 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
+    
+
       <section className="hero">
         <canvas id="particles" ref={canvasRef}></canvas>
         <p className="hero-eyebrow">Circulation, without the chaos</p>
@@ -210,14 +206,12 @@ export default function LandingPage() {
       </div>
 
       <section id="cta" className="cta-section">
-        <p className="label reveal" style={{ justifyContent: 'center', display: 'flex' }}>Ready when you are</p>
+        <p className="label cta-label reveal">Ready when you are</p>
         <h2 className="reveal">The desk is open.</h2>
         <Link to="/home" className="btn btn-primary reveal">Start Circulating →</Link>
       </section>
 
-      <footer className="landing-footer">
-        § Stacks — A Library Management System · Kept plainly, in order
-      </footer>
+      
     </div>
   )
 }

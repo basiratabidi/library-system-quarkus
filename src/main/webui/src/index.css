@@ -149,7 +149,7 @@ a {
 }
 
 /* ==========================================================================
-   4. Site Navigation Bar (Nav.jsx) — light, thin underline, not dark
+   4. Site Navigation Bar (Nav.jsx)
    ========================================================================== */
 .site-nav {
   background-color: var(--bg-primary);
@@ -520,6 +520,7 @@ a {
   border: var(--border-thin);
   background-color: var(--bg-card);
   border-radius: 0;
+  text-align: center;
 }
 
 .hero-eyebrow {
@@ -543,6 +544,14 @@ a {
   color: var(--text-muted);
   font-size: 1rem;
   max-width: 680px;
+  margin: 0 auto;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
 .stat-row {
@@ -702,15 +711,12 @@ a {
   padding-top: 0.75rem;
   border-top: var(--border-thin);
 }
+
 .books-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 2rem;
   align-items: start;
-}
-
-@media (max-width: 900px) {
-  .books-layout { grid-template-columns: 1fr; }
 }
 
 .card-actions {
@@ -1015,7 +1021,7 @@ tr:last-child td {
 }
 
 /* ==========================================================================
-   9. Animations & Responsive Breakpoints
+   9. Animations & Media Fallbacks
    ========================================================================== */
 .reveal {
   opacity: 0;
@@ -1026,6 +1032,105 @@ tr:last-child td {
 .reveal.in {
   opacity: 1;
   transform: translateY(0);
+}
+
+.book-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-cover-fallback {
+  font-size: 2.4rem;
+}
+
+/* ==========================================================================
+   10. Split Auth Layout (Login & Signup)
+   ========================================================================== */
+.auth-split-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 480px;
+  border: var(--border-thin);
+  background: var(--bg-card);
+  margin-bottom: 2.5rem;
+}
+
+.auth-panel {
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-text-panel {
+  background-color: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  border-right: var(--border-thin);
+}
+
+.auth-text-panel.text-right {
+  border-right: none;
+  border-left: var(--border-thin);
+}
+
+.auth-text-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.6rem 0 1rem;
+  color: var(--text-primary);
+}
+
+.auth-text-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   11. Auth Form Utilities 
+   ========================================================================== */
+.role-selection-group {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.role-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.auth-footer-text {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-footer-link {
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   12. Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 900px) {
+  .books-layout { 
+    grid-template-columns: 1fr; 
+  }
 }
 
 @media (max-width: 868px) {
@@ -1042,15 +1147,21 @@ tr:last-child td {
   .page-title { font-size: 1.75rem; }
   .stat-row { grid-template-columns: 1fr 1fr; }
   .stat-card { border-bottom: var(--border-thin); }
+  .auth-split-container { grid-template-columns: 1fr; }
+  
+  .auth-text-panel {
+    border-right: none;
+    border-bottom: var(--border-thin);
+    padding: 2rem 1.5rem;
+  }
+  
+  .auth-text-panel.text-right {
+    border-left: none;
+    border-top: var(--border-thin);
+    order: 2;
+  }
+  
+  .auth-panel {
+    padding: 2rem 1.5rem;
+  }
 }
-
-/* ---------- book cover images ---------- */
-.book-cover-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.book-cover-fallback {
-  font-size: 2.4rem;
-}
-

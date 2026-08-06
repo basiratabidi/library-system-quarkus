@@ -12,6 +12,10 @@ import LendingPage from './pages/LendingPage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
 import UserLendingPage from './pages/UserLendingPage'
+import Collections from './pages/Collections'
+import ArchiveLogs from './pages/ArchiveLogs'
+import Contact from './pages/Contact'
+import Help from './pages/Help'
 import { getAuth } from './api'
 import './index.css'
 
@@ -57,6 +61,10 @@ export default function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/user-lending" element={<UserLendingPage />} />
+          <Route path="/collections" element={<Collections />} />
+          <Route path="/archive" element={<ArchiveLogs />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/help" element={<Help />} />       
         </Routes>
       </main>
       {!isLanding && <Footer />}

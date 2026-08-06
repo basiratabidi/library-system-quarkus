@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -10,17 +10,18 @@ export default function Footer() {
         </p>
       </div>
       <div className="footer-col">
-        <h4>Menu</h4>
-        <Link to="/home">Front Desk</Link  >
-        <Link to="/books">Books</Link>
-        <Link to="/members">Members</Link>
+        <h4>Explore</h4>
+        <Link to="/books">Catalog & Books</Link>
+        <Link to="/collections">Special Collections</Link>
+        <Link to="/archive">Archive Logs</Link>
       </div>
       <div className="footer-col">
-        <h4>System</h4>
-        <Link to="/lending">Lending</Link>
-        <Link to="/welcome">About</Link>
+        <h4>Information</h4>
+        <Link to="/about">About</Link>
+        <Link to="/contact">Contact & Hours</Link>
+        <Link to="/help">System Guide</Link>
       </div>
       <div className="footer-bottom">© 2026 Stacks Library System. All rights reserved.</div>
     </footer>
-  )
+  );
 }

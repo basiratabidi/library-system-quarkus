@@ -29,10 +29,18 @@ export default function Header() {
           className="top-bar-search-input"
         />
       </form>
-      {isAdmin ? (
-        <Link to="/lending" className="btn btn-primary top-bar-cta">Lend a Book</Link>
+      {!auth ? (
+        <Link to="/login" className="btn btn-primary top-bar-cta">
+          Login / Sign Up
+        </Link>
+      ) : isAdmin ? (
+        <Link to="/lending" className="btn btn-primary top-bar-cta">
+          Lend a Book
+        </Link>
       ) : (
-        <Link to="/user-lending" className="btn btn-primary top-bar-cta">My Lended Books</Link>
+        <Link to="/user-lending" className="btn btn-primary top-bar-cta">
+          My Lended Books
+        </Link>
       )}
     </header>
   )

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { authApi } from '../api'
 import PageBanner from '../components/PageBanner'
 import { useNavigate, Link } from 'react-router-dom'
-import { Panel, Field, useFeedback, FeedbackBanner } from '../components/ui'
+import { Field, useFeedback, FeedbackBanner } from '../components/ui'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -27,9 +27,8 @@ export default function LoginPage() {
       localStorage.setItem('auth', JSON.stringify(auth))
       notify('success', `Welcome back, ${auth.username}.`)
       
-
       setTimeout(() => {
-        navigate ( auth.role === 'ADMIN' ? 'home' : 'books') 
+        navigate(auth.role === 'ADMIN' ? '/home' : '/books') 
       }, 500)
     } catch (err) {
       notify('error', err.message || 'Invalid username or password.')
@@ -41,21 +40,35 @@ export default function LoginPage() {
   return (
     <div>
       <PageBanner crumb="Log In" title="Welcome Back" />
-      <Panel className="mb-8">
-        {feedback ? <FeedbackBanner feedback={feedback} onClose={clear} /> : null}
-        <form onSubmit={handleSubmit} className="book-form">
-          <Field label="Username" htmlFor="login-username" error={formError.username}>
-            <input id="login-username" className="input" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="jane.doe" />
-          </Field>
-          <Field label="Password" htmlFor="login-password" error={formError.password}>
-            <input id="login-password" type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
-          </Field>
-          <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Logging in…' : 'Log In'}</button>
-        </form>
-        <p style={{ marginTop: '1rem' }}>
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </p>
-      </Panel>
+      
+      <div className="auth-split-container">
+        <div className="auth-panel">
+          {feedback ? <FeedbackBanner feedback={feedback} onClose={clear} /> : null}
+          <h3 className="form-heading">Account Access</h3>
+          <form onSubmit={handleSubmit}>
+            <Field label="Username" htmlFor="login-username" error={formError.username}>
+              <input id="login-username" className="input" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="jane.doe" />
+            </Field>
+            <Field label="Password" htmlFor="login-password" error={formError.password}>
+              <input id="login-password" type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            </Field>
+            <button type="submit" className="btn btn-primary btn-full" disabled={submitting}>
+              {submitting ? 'Logging in…' : 'Log In'}
+            </button>
+          </form>
+          <p className="auth-footer-text">
+            Don't have an account? <Link to="/signup" className="auth-footer-link">Sign up</Link>
+          </p>
+        </div>
+
+        <div className="auth-text-panel text-right">
+          <span className="hero-eyebrow">Member Portal</span>
+          <h2 className="auth-text-title">Your Next Great Read Awaits</h2>
+          <p className="auth-text-desc">
+            Log in to access your dashboard, review due dates, browse available titles, and manage active loans.
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
