@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { booksApi, membersApi } from '../api'
-import { CountUp } from '../components/ui'
-import { Reveal } from '../components/ui'
-import PageBanner from '../components/PageBanner'
+import { CountUp, Reveal } from '../components/ui'
 
 export default function HomePage() {
   const [stats, setStats] = useState({ books: 0, available: 0, members: 0 })
+  const [onLoan, setOnLoan] = useState([])
+  const [recentMembers, setRecentMembers] = useState([])
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -16,6 +16,8 @@ export default function HomePage() {
           available: books.filter((b) => b.isAvailable).length,
           members: members.length,
         })
+        setOnLoan(books.filter((b) => !b.isAvailable).slice(0, 3))
+        setRecentMembers(members.slice(-2))
         setLoaded(true)
       })
       .catch(console.error)
@@ -31,41 +33,76 @@ export default function HomePage() {
   return (
     <div>
       <div className="hero">
-        <p className="hero-eyebrow">Est. in code, kept by hand</p>
+        <p className="hero-eyebrow">Operations Console</p>
         <h2 className="hero-title">The desk is open.</h2>
         <p className="hero-sub">
-          Every book, every member, every loan — tracked the way a good circulation desk always has: plainly, and in order.
+          Overview of the day's circulation, member registrations, and catalog health — managed from a single station.
         </p>
       </div>
-      
+
       <Reveal>
-          <div className="stat-row">
-            {cards.map((c, i) => (
-              <div key={c.label} className="stat-card" style={{ animationDelay: `${i * 60}ms` }}>
-                <span className="stat-number"><CountUp value={c.value} active={loaded} /></span>
-                <span className="stat-label">{c.label}</span>
-              </div>
-            ))}
-          </div>
+        <div className="stat-row">
+          {cards.map((c) => (
+            <div key={c.label} className="stat-card">
+              <span className="stat-number"><CountUp value={c.value} active={loaded} /></span>
+              <span className="stat-label">{c.label}</span>
+            </div>
+          ))}
+        </div>
       </Reveal>
 
       <Reveal>
-        <div className="quick-links">
+        <div className="quick-links mb-8">
           <a href="#/books" className="quick-link">
-            <span className="quick-link-label">Browse</span>
-            <span className="quick-link-title">The Catalogue →</span>
+            <span className="quick-link-label">Browse & Edit</span>
+            <span className="quick-link-title">The Catalog →</span>
           </a>
           <a href="#/members" className="quick-link">
-            <span className="quick-link-label">Manage</span>
-            <span className="quick-link-title">Members →</span>
+            <span className="quick-link-label">View Records</span>
+            <span className="quick-link-title">Membership →</span>
           </a>
           <a href="#/lending" className="quick-link">
-            <span className="quick-link-label">Track</span>
-            <span className="quick-link-title">What's On Loan →</span>
+            <span className="quick-link-label">Process Returns</span>
+            <span className="quick-link-title">Lending Desk →</span>
           </a>
         </div>
       </Reveal>
+
+      <Reveal>
+        <div className="section-heading">
+          <h2>Recent Activity</h2>
+        </div>
+        <div className="table-panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Book / Member</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {onLoan.map((b) => (
+                <tr key={b.id}>
+                  <td><span className="activity-type-tag loan">Loan</span></td>
+                  <td>{b.title}</td>
+                  <td>Out</td>
+                </tr>
+              ))}
+              {recentMembers.map((m) => (
+                <tr key={m.id}>
+                  <td><span className="activity-type-tag register">Register</span></td>
+                  <td>{m.name}</td>
+                  <td>Active</td>
+                </tr>
+              ))}
+              {onLoan.length === 0 && recentMembers.length === 0 ? (
+                <tr><td colSpan={3}>No recent activity to show.</td></tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </Reveal>
     </div>
-    
   )
-}
+} 

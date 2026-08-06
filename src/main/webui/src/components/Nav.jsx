@@ -35,12 +35,17 @@ export default function Nav({ route }) {
             {tab.label}
           </a>
         ))}
-        {auth ? (
-          <button className="nav-item" onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-            Log Out ({auth.username})
-          </button>
-        ) : null}
       </div>
+      {auth ? (
+        <div className="nav-user">
+          <div className="nav-user-info">
+            <span className="nav-user-name">{auth.username}</span>
+            <span className="nav-user-role">{auth.role}</span>
+          </div>
+          <div className="nav-user-avatar">{auth.username.slice(0, 2).toUpperCase()}</div>
+          <button className="nav-logout" onClick={logout}>Log Out</button>
+        </div>
+      ) : null}
     </nav>
   )
 }

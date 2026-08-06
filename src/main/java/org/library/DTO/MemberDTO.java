@@ -6,5 +6,7 @@ public class MemberDTO {
     public String email;
     public String phoneNumber;
     public boolean isActive;
+    
 
 }
+

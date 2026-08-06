@@ -1,4 +1,5 @@
 package org.library.exception;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -16,7 +17,6 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
                     .entity(exception.getMessage())
                     .build();
         }
-
         if (exception instanceof AlreadyLentExpection) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(exception.getMessage())
@@ -24,6 +24,11 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
         }
         if (exception instanceof LendingNotFoundException) {
             return Response.status(Response.Status.NOT_FOUND)
+                    .entity(exception.getMessage())
+                    .build();
+        }
+        if (exception instanceof WebApplicationException wae) {
+            return Response.status(wae.getResponse().getStatus())
                     .entity(exception.getMessage())
                     .build();
         }

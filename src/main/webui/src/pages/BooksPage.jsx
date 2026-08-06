@@ -18,6 +18,12 @@ function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEdi
         ) : (
           <span className="book-cover-fallback">📖</span>
         )}
+        {!isEditing ? (
+          <div className="book-cover-actions">
+            <button className="btn btn-icon" onClick={() => onStartEdit(book)} aria-label={`Edit ${book.title}`}>✎</button>
+            <ConfirmDeleteButton label={`Delete ${book.title}`} pending={deleting} onConfirm={onDelete} />
+          </div>
+        ) : null}
       </div>
       <div className="book-card-body">
         {isEditing ? (
@@ -36,10 +42,6 @@ function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEdi
             <StarRating value={averageRating} count={reviewCount} />
             <div className="book-card-footer">
               {book.isAvailable ? <StampBadge tone="green">Available</StampBadge> : <StampBadge tone="red">On Loan</StampBadge>}
-              <div className="card-actions">
-                <button className="btn btn-icon btn-ghost" onClick={() => onStartEdit(book)} aria-label={`Edit ${book.title}`}>✎</button>
-                <ConfirmDeleteButton label={`Delete ${book.title}`} pending={deleting} onConfirm={onDelete} />
-              </div>
             </div>
           </>
         )}
@@ -135,99 +137,111 @@ export default function BooksPage() {
   const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE))
   const paged = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
+  const totalVolumes = books?.length ?? 0
+  const onLoanCount = books?.filter((b) => !b.isAvailable).length ?? 0
+  const availableCount = totalVolumes - onLoanCount
+
   return (
     <div>
       <PageBanner crumb="Books" title="The Catalog" />
-      <Panel className="mb-8">
-        <h3 className="form-heading">+ Accession a New Book</h3>
-        <form onSubmit={handleAdd} className="book-form">
-          <Field label="Title" htmlFor="book-title" error={formError.title}>
-            <input id="book-title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The Name of the Wind" />
-          </Field>
-          <Field label="Author" htmlFor="book-author" error={formError.author}>
-            <input id="book-author" className="input" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Patrick Rothfuss" />
-          </Field>
-          <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Adding…' : 'Add Book'}</button>
-        </form>
-      </Panel>
 
       {feedback ? <FeedbackBanner feedback={feedback} onClose={clear} /> : null}
 
       {error ? (
         <StateNotice variant="error" title="Could not load the catalog." detail={error.message} />
-      ) : !loading && (!books || books.length === 0) ? (
-        <StateNotice title="No books on record yet." detail="Accession your first title using the form above." />
       ) : (
-        <>
-          {!loading && books && books.length > 0 ? (
-            <div className="toolbar-row">
-              <SearchField value={query} onChange={setQuery} placeholder="Search by title or author…" />
-              <SortSelect
-                value={sort}
-                onChange={setSort}
-                options={[
-                  { value: 'title', label: 'Sort: Title A-Z' },
-                  { value: 'available', label: 'Sort: Available First' },
-                  { value: 'rating', label: 'Sort: Top Rated' },
-                ]}
-              />
-              {query ? <span className="count-tag">{filtered.length} of {books.length}</span> : null}
-            </div>
-          ) : null}
+        <div className="books-layout">
+          <div>
+            <Panel className="mb-4">
+              <h3 className="form-heading">+ Accession a New Book</h3>
+              <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column' }}>
+                <Field label="Title" htmlFor="book-title" error={formError.title}>
+                  <input id="book-title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The Name of the Wind" />
+                </Field>
+                <Field label="Author" htmlFor="book-author" error={formError.author}>
+                  <input id="book-author" className="input" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Patrick Rothfuss" />
+                </Field>
+                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Adding…' : 'Add Book'}</button>
+              </form>
+            </Panel>
 
-          {loading ? (
-            <div className="book-grid">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="book-card">
-                  <div className="book-cover skeleton-bar" style={{ height: '100%' }} />
-                </div>
-              ))}
+            <div className="catalog-summary">
+              <span className="catalog-summary-label">Catalog Summary</span>
+              <div className="catalog-summary-row"><span>Total Volumes</span><strong>{totalVolumes}</strong></div>
+              <div className="catalog-summary-row"><span>On Loan</span><strong>{onLoanCount}</strong></div>
+              <div className="catalog-summary-row"><span>Available</span><strong>{availableCount}</strong></div>
             </div>
-          ) : sorted.length === 0 ? (
-            <StateNotice title={`No books match "${query}".`} />
-          ) : (
-            <Reveal>
+          </div>
+
+          <div>
+            {!loading && books && books.length > 0 ? (
+              <div className="toolbar-row">
+                <SearchField value={query} onChange={setQuery} placeholder="Search by title or author…" />
+                <SortSelect
+                  value={sort}
+                  onChange={setSort}
+                  options={[
+                    { value: 'title', label: 'Sort: Title A-Z' },
+                    { value: 'available', label: 'Sort: Available First' },
+                    { value: 'rating', label: 'Sort: Top Rated' },
+                  ]}
+                />
+                {query ? <span className="count-tag">{filtered.length} of {books.length}</span> : null}
+              </div>
+            ) : null}
+
+            {loading ? (
               <div className="book-grid">
-                {paged.map((book) => (
-                  <BookCard
-                    key={book.id}
-                    book={book}
-                    isEditing={editingId === book.id}
-                    editTitle={editTitle}
-                    editAuthor={editAuthor}
-                    setEditTitle={setEditTitle}
-                    setEditAuthor={setEditAuthor}
-                    onStartEdit={startEdit}
-                    onSaveEdit={() => saveEdit(book.id)}
-                    onCancelEdit={() => setEditingId(null)}
-                    onDelete={() => handleDelete(book)}
-                    deleting={deletingId === book.id}
-                  />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="book-card">
+                    <div className="book-cover skeleton-bar" style={{ height: '100%' }} />
+                  </div>
                 ))}
               </div>
-
-              {pageCount > 1 ? (
-                <div className="toolbar-row" style={{ justifyContent: 'center', marginTop: '1.5rem' }}>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    ← Prev
-                  </button>
-                  <span className="count-tag">Page {page} of {pageCount}</span>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-                    disabled={page === pageCount}
-                  >
-                    Next →
-                  </button>
+            ) : !books || books.length === 0 ? (
+              <StateNotice title="No books on record yet." detail="Accession your first title using the form above." />
+            ) : sorted.length === 0 ? (
+              <StateNotice title={`No books match "${query}".`} />
+            ) : (
+              <Reveal>
+                <div className="book-grid">
+                  {paged.map((book) => (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      isEditing={editingId === book.id}
+                      editTitle={editTitle}
+                      editAuthor={editAuthor}
+                      setEditTitle={setEditTitle}
+                      setEditAuthor={setEditAuthor}
+                      onStartEdit={startEdit}
+                      onSaveEdit={() => saveEdit(book.id)}
+                      onCancelEdit={() => setEditingId(null)}
+                      onDelete={() => handleDelete(book)}
+                      deleting={deletingId === book.id}
+                    />
+                  ))}
                 </div>
-              ) : null}
-            </Reveal>
-          )}
-        </>
+
+                {pageCount > 1 ? (
+                  <div className="pagination">
+                    <button className="page-num" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>‹</button>
+                    {Array.from({ length: pageCount }).map((_, i) => (
+                      <button
+                        key={i}
+                        className={`page-num ${page === i + 1 ? 'active' : ''}`}
+                        onClick={() => setPage(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                    <button className="page-num" onClick={() => setPage((p) => Math.min(pageCount, p + 1))} disabled={page === pageCount}>›</button>
+                  </div>
+                ) : null}
+              </Reveal>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )
