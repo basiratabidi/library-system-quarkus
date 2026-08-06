@@ -80,6 +80,8 @@ export const membersApi = {
 
 /* ---------- Lending ---------- */
 export const lendingApi = {
+  mine: () => api('/lendings/mine'),
+  lendSelf: (bookId) => api(`/lendings/self/${bookId}`, { method: 'POST' }),
   lend: (bookId, memberId) => api(`/lendings/${bookId}/${memberId}`, { method: 'POST' }),
   returnBook: (lendingId) => api(`/lendings/return/${lendingId}`, { method: 'POST' }),
   get: (lendingId) => api(`/lendings/${lendingId}`),

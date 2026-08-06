@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { authApi } from '../api'
 import PageBanner from '../components/PageBanner'
+import { useNavigate, Link } from 'react-router-dom'
 import { Panel, Field, useFeedback, FeedbackBanner } from '../components/ui'
 
 export default function LoginPage() {
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState({})
   const { feedback, notify, clear } = useFeedback()
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -24,8 +26,10 @@ export default function LoginPage() {
       const auth = await authApi.login({ username: username.trim(), password })
       localStorage.setItem('auth', JSON.stringify(auth))
       notify('success', `Welcome back, ${auth.username}.`)
+      
+
       setTimeout(() => {
-        window.location.hash = auth.role === 'ADMIN' ? 'home' : 'books'
+        navigate ( auth.role === 'ADMIN' ? 'home' : 'books') 
       }, 500)
     } catch (err) {
       notify('error', err.message || 'Invalid username or password.')
@@ -49,7 +53,7 @@ export default function LoginPage() {
           <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Logging in…' : 'Log In'}</button>
         </form>
         <p style={{ marginTop: '1rem' }}>
-          Don't have an account? <a href="#/signup">Sign up</a>
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </Panel>
     </div>

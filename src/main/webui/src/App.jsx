@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Header from './components/Header'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
@@ -10,54 +11,53 @@ import MembersPage from './pages/MembersPage'
 import LendingPage from './pages/LendingPage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
+import UserLendingPage from './pages/UserLendingPage'
 import { getAuth } from './api'
 import './index.css'
 
-export default function App() {
-  const [route, setRoute] = useState(() => {
-    return window.location.hash.replace('#/', '').split('?')[0] || 'welcome'
-  })
+function RouteGuard() {
+  const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const auth = getAuth()
+    const path = location.pathname.replace('/', '') || 'welcome'
     const adminOnly = ['home', 'members', 'lending']
-    const authRequired = ['books', ...adminOnly]
-      if (authRequired.includes(route) && !auth) {
-        window.location.hash = 'login'
-      } else if (adminOnly.includes(route) && auth?.role !== 'ADMIN') {
-        window.location.hash = 'books'
-      }
-  }, [route])
-
-  const renderPage = () => {
-    switch (route) {
-      case 'home':
-        return <HomePage />
-      case 'books':
-        return <BooksPage />
-      case 'members':
-        return <MembersPage />
-      case 'lending':
-        return <LendingPage />
-      case 'login':
-        return <LoginPage />
-      case 'signup':
-        return <SignUpPage />
-      case 'welcome':
-      default:
-        return <LandingPage />
+    const authRequired = ['books', 'user-lending', ...adminOnly]
+    
+    if (authRequired.includes(path) && !auth) {
+      navigate('/login')
+    } else if (adminOnly.includes(path) && auth?.role !== 'ADMIN') {
+      navigate('/books')
     }
-  }
+  }, [location.pathname])
 
+  return null
+}
+
+export default function App() {
+  const location = useLocation()
+  const route = location.pathname.replace('/', '') || 'welcome'
   const isLanding = route === 'welcome' || route === ''
-
+  
   return (
     <div className="app-shell">
       <Cursor />
+      <RouteGuard />
       {!isLanding && <Header />}
-      {!isLanding && <Nav route={route} />}
+      {!isLanding && <Nav />}
       <main className={`main-content ${isLanding ? 'main-content--landing' : ''}`}>
-        {renderPage()}
+        <Routes>
+          <Route path="/welcome" element={<LandingPage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/books" element={<BooksPage />} />
+          <Route path="/members" element={<MembersPage />} />
+          <Route path="/lending" element={<LendingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="*" element={<LandingPage />} />
+          <Route path="/user-lending" element={<UserLendingPage />} />
+        </Routes>
       </main>
       {!isLanding && <Footer />}
     </div>

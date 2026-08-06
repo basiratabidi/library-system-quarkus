@@ -1,13 +1,17 @@
-// Header.jsx — Integrated Glass Topbar Structure
 import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { getAuth } from '../api'
 
 export default function Header() {
   const [query, setQuery] = useState('')
+  const navigate = useNavigate()
+  const auth = getAuth()
+  const isAdmin = auth?.role === 'ADMIN'
 
   function handleSearch(e) {
     e.preventDefault()
     if (!query.trim()) return
-    window.location.hash = `#/books?q=${encodeURIComponent(query.trim())}`
+    navigate(`/books?q=${encodeURIComponent(query.trim())}`)
   }
 
   return (
@@ -25,7 +29,11 @@ export default function Header() {
           className="top-bar-search-input"
         />
       </form>
-      <a href="#/lending" className="btn btn-primary top-bar-cta">Lend a Book</a>
+      {isAdmin ? (
+        <Link to="/lending" className="btn btn-primary top-bar-cta">Lend a Book</Link>
+      ) : (
+        <Link to="/user-lending" className="btn btn-primary top-bar-cta">My Lended Books</Link>
+      )}
     </header>
   )
 }

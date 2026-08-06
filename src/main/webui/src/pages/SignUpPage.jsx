@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { authApi } from '../api'
 import PageBanner from '../components/PageBanner'
+import { useNavigate, Link } from 'react-router-dom'
 import { Panel, Field, useFeedback, FeedbackBanner } from '../components/ui'
 
 export default function SignupPage() {
@@ -10,8 +11,11 @@ export default function SignupPage() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState({})
   const { feedback, notify, clear } = useFeedback()
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
+
+
     e.preventDefault()
     const errs = {}
     if (!username.trim()) errs.username = 'Username is required.'
@@ -25,7 +29,7 @@ export default function SignupPage() {
     try {
       await authApi.signup({ username: username.trim(), password })
       notify('success', 'Account created. You can log in now.')
-      setTimeout(() => { window.location.hash = 'login' }, 800)
+      setTimeout(() => { navigate = 'login' }, 800)
     } catch (err) {
       notify('error', err.message || 'Could not create account.')
     } finally {
@@ -51,7 +55,7 @@ export default function SignupPage() {
           <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Creating…' : 'Sign Up'}</button>
         </form>
         <p style={{ marginTop: '1rem' }}>
-          Already have an account? <a href="#/login">Log in</a>
+          Already have an account? <Link to="/login">Log in</Link>
         </p>
       </Panel>
     </div>

@@ -1,17 +1,18 @@
 import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { getAuth, logout } from '../api'
 
-export default function Nav({ route }) {
+export default function Nav() {
   const [open, setOpen] = useState(false)
   const auth = getAuth()
 
   const tabs = [
-    { href: '#/welcome', label: 'Welcome' },
-    ...(auth?.role === 'ADMIN' ? [{ href: '#/home', label: 'Front Desk' }] : []),
-    { href: '#/books', label: 'Books' },
-    ...(auth?.role === 'ADMIN' ? [{ href: '#/members', label: 'Members' }] : []),
-    ...(auth?.role === 'ADMIN' ? [{ href: '#/lending', label: 'Lending' }] : []),
-    ...(!auth ? [{ href: '#/login', label: 'Log In' }, { href: '#/signup', label: 'Sign Up' }] : []),
+    { to: '/welcome', label: 'Welcome' },
+    ...(auth?.role === 'ADMIN' ? [{ to: '/home', label: 'Front Desk' }] : []),
+    { to: '/books', label: 'Books' },
+    ...(auth?.role === 'ADMIN' ? [{ to: '/members', label: 'Members' }] : []),
+    ...(auth?.role === 'ADMIN' ? [{ to: '/lending', label: 'Lending' }] : []),
+    ...(!auth ? [{ to: '/login', label: 'Log In' }, { to: '/signup', label: 'Sign Up' }] : []),
   ]
 
   return (
@@ -26,14 +27,14 @@ export default function Nav({ route }) {
       </button>
       <div className={`nav-links ${open ? 'nav-links-open' : ''}`}>
         {tabs.map((tab) => (
-          <a
-            key={tab.href}
-            href={tab.href}
-            className={`nav-item ${route === tab.href.replace('#/', '') ? 'active' : ''}`}
+          <NavLink
+            key={tab.to}
+            to={tab.to}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             onClick={() => setOpen(false)}
           >
             {tab.label}
-          </a>
+          </NavLink>
         ))}
       </div>
       {auth ? (

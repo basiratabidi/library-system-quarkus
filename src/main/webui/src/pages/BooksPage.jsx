@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
-import { booksApi, getBookRating } from '../api'
+import { booksApi, getBookRating, getAuth, lendingApi } from '../api'
 import { Reveal } from '../components/ui'
 import PageBanner from '../components/PageBanner'
+import { useSearchParams } from 'react-router-dom'
 import {
   ConfirmDeleteButton, Field, Panel, SearchField,
   SortSelect, StampBadge, StarRating, StateNotice, FeedbackBanner, useFeedback,
 } from '../components/ui'
 
-function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEditAuthor, onStartEdit, onSaveEdit, onCancelEdit, onDelete, deleting }) {
+function BookCard({ book, canManage, isEditing, editTitle, editAuthor, setEditTitle, setEditAuthor, onStartEdit, onSaveEdit, onCancelEdit, onDelete, deleting }) {
   const { averageRating, reviewCount } = getBookRating(book.id)
 
   return (
@@ -18,7 +19,7 @@ function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEdi
         ) : (
           <span className="book-cover-fallback">📖</span>
         )}
-        {!isEditing ? (
+        {canManage && !isEditing ? (
           <div className="book-cover-actions">
             <button className="btn btn-icon" onClick={() => onStartEdit(book)} aria-label={`Edit ${book.title}`}>✎</button>
             <ConfirmDeleteButton label={`Delete ${book.title}`} pending={deleting} onConfirm={onDelete} />
@@ -51,6 +52,9 @@ function BookCard({ book, isEditing, editTitle, editAuthor, setEditTitle, setEdi
 }
 
 export default function BooksPage() {
+  const auth = getAuth()
+  const isAdmin = auth?.role === 'ADMIN'
+
   const [books, setBooks] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -61,14 +65,15 @@ export default function BooksPage() {
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState({})
 
+  const [lendBookId, setLendBookId] = useState('')
+  const [lending, setLending] = useState(false)
+
   const [editingId, setEditingId] = useState(null)
   const [editTitle, setEditTitle] = useState('')
   const [editAuthor, setEditAuthor] = useState('')
   const [deletingId, setDeletingId] = useState(null)
-  const [query, setQuery] = useState(() => {
-    const params = new URLSearchParams(window.location.hash.split('?')[1] || '')
-    return params.get('q') || ''
-  })
+  const [searchParams] = useSearchParams()
+const [query, setQuery] = useState(() => searchParams.get('q') || '')
   const [sort, setSort] = useState('title')
 
   const [page, setPage] = useState(1)
@@ -97,6 +102,20 @@ export default function BooksPage() {
     } catch (err) {
       notify('error', err.message || 'Could not add the book.')
     } finally { setSubmitting(false) }
+  }
+
+  async function handleLendSelf(e) {
+    e.preventDefault()
+    if (!lendBookId) { notify('error', 'Select a book to lend.'); return }
+    setLending(true)
+    try {
+      await lendingApi.lendSelf(lendBookId)
+      setLendBookId('')
+      load()
+      notify('success', 'Book lended to your account.')
+    } catch (err) {
+      notify('error', err.message || 'Could not lend that book.')
+    } finally { setLending(false) }
   }
 
   function startEdit(book) {
@@ -140,6 +159,7 @@ export default function BooksPage() {
   const totalVolumes = books?.length ?? 0
   const onLoanCount = books?.filter((b) => !b.isAvailable).length ?? 0
   const availableCount = totalVolumes - onLoanCount
+  const availableBooks = books?.filter((b) => b.isAvailable) ?? []
 
   return (
     <div>
@@ -152,18 +172,33 @@ export default function BooksPage() {
       ) : (
         <div className="books-layout">
           <div>
-            <Panel className="mb-4">
-              <h3 className="form-heading">+ Accession a New Book</h3>
-              <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column' }}>
-                <Field label="Title" htmlFor="book-title" error={formError.title}>
-                  <input id="book-title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The Name of the Wind" />
-                </Field>
-                <Field label="Author" htmlFor="book-author" error={formError.author}>
-                  <input id="book-author" className="input" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Patrick Rothfuss" />
-                </Field>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Adding…' : 'Add Book'}</button>
-              </form>
-            </Panel>
+            {isAdmin ? (
+              <Panel className="mb-4">
+                <h3 className="form-heading">+ Accession a New Book</h3>
+                <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Field label="Title" htmlFor="book-title" error={formError.title}>
+                    <input id="book-title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The Name of the Wind" />
+                  </Field>
+                  <Field label="Author" htmlFor="book-author" error={formError.author}>
+                    <input id="book-author" className="input" value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Patrick Rothfuss" />
+                  </Field>
+                  <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Adding…' : 'Add Book'}</button>
+                </form>
+              </Panel>
+            ) : (
+              <Panel className="mb-4">
+                <h3 className="form-heading">Lend a Book</h3>
+                <form onSubmit={handleLendSelf} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Field label="Book" htmlFor="lend-book">
+                    <select id="lend-book" className="input" value={lendBookId} onChange={(e) => setLendBookId(e.target.value)}>
+                      <option value="">Select a book</option>
+                      {availableBooks.map((b) => <option key={b.id} value={b.id}>{b.title}</option>)}
+                    </select>
+                  </Field>
+                  <button type="submit" className="btn btn-primary" disabled={lending}>{lending ? 'Lending…' : 'Lend It'}</button>
+                </form>
+              </Panel>
+            )}
 
             <div className="catalog-summary">
               <span className="catalog-summary-label">Catalog Summary</span>
@@ -209,6 +244,7 @@ export default function BooksPage() {
                     <BookCard
                       key={book.id}
                       book={book}
+                      canManage={isAdmin}
                       isEditing={editingId === book.id}
                       editTitle={editTitle}
                       editAuthor={editAuthor}

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 const HERO_TEXT = "A Library, Kept in Order"
 
 export default function LandingPage() {
@@ -146,13 +147,12 @@ export default function LandingPage() {
         <p className="hero-eyebrow">Circulation, without the chaos</p>
         <h1 className="hero-title">{chars}</h1>
         <p className="hero-sub">
-          Every book, every member, every loan — tracked plainly, kept in order, the way a good desk always has.
+          Every book, every member, every loan, tracked plainly, kept in order, the way a good desk always has.
         </p>
         <div className="hero-cta">
-          <a href="#/home" className="btn btn-primary">Open the Desk</a>
+          <Link to="/home" className="btn btn-primary">Open the Desk</Link>
           <a href="#features" className="btn btn-ghost">See How It Works</a>
         </div>
-        <div className="scroll-hint">Scroll</div>
       </section>
 
       <section>
@@ -209,7 +209,7 @@ export default function LandingPage() {
       <section id="cta" className="cta-section">
         <p className="label reveal" style={{ justifyContent: 'center', display: 'flex' }}>Ready when you are</p>
         <h2 className="reveal">The desk is open.</h2>
-        <a href="#/home" className="btn btn-primary reveal">Start Circulating →</a>
+        <Link to="/home" className="btn btn-primary reveal">Start Circulating →</Link>
       </section>
 
       <footer className="landing-footer">
