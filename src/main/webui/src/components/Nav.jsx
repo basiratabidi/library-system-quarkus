@@ -1,15 +1,18 @@
 import { useState } from 'react'
-
-const tabs = [
-  { href: '#/welcome', label: 'Welcome' },
-  { href: '#/home', label: 'Front Desk' },
-  { href: '#/books', label: 'Books' },
-  { href: '#/members', label: 'Members' },
-  { href: '#/lending', label: 'Lending' },
-]
+import { getAuth, logout } from '../api'
 
 export default function Nav({ route }) {
   const [open, setOpen] = useState(false)
+  const auth = getAuth()
+
+  const tabs = [
+    { href: '#/welcome', label: 'Welcome' },
+    ...(auth?.role === 'ADMIN' ? [{ href: '#/home', label: 'Front Desk' }] : []),
+    { href: '#/books', label: 'Books' },
+    ...(auth?.role === 'ADMIN' ? [{ href: '#/members', label: 'Members' }] : []),
+    ...(auth?.role === 'ADMIN' ? [{ href: '#/lending', label: 'Lending' }] : []),
+    ...(!auth ? [{ href: '#/login', label: 'Log In' }, { href: '#/signup', label: 'Sign Up' }] : []),
+  ]
 
   return (
     <nav className="site-nav">
@@ -32,6 +35,11 @@ export default function Nav({ route }) {
             {tab.label}
           </a>
         ))}
+        {auth ? (
+          <button className="nav-item" onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            Log Out ({auth.username})
+          </button>
+        ) : null}
       </div>
     </nav>
   )

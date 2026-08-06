@@ -1,4 +1,4 @@
-package org.library.Response;
+package org.library.DTO;
 
 public class AuthResponse {
     public String token;

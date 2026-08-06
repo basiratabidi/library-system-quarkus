@@ -5,10 +5,10 @@ import org.library.DTO.BookDTO;
 
 import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.annotation.security.RolesAllowed;
+
 import service.BookService;
 
 
@@ -30,6 +30,7 @@ public class BookController {
     }
 
     @POST
+    @RolesAllowed("ADMIN")
     public Response addBook(BookDTO book){
         BookDTO addedBook= bookService.addBook(book);
         return Response.ok(addedBook).build();
@@ -37,6 +38,7 @@ public class BookController {
 
     @PUT
     @Path("/{id}")
+    @RolesAllowed("ADMIN")
     public Response updateBook(@PathParam("id") String id, BookDTO book){
         BookDTO updatedBook= bookService.updateBook(id, book);
         return Response.ok(updatedBook).build();        
@@ -44,6 +46,7 @@ public class BookController {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("ADMIN")
     public Response deleteBook(@PathParam("id") String id){
         BookDTO deletedBook= bookService.deleteBook(id);
         return Response.ok(deletedBook).build();    

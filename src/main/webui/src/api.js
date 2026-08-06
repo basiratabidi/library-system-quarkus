@@ -31,12 +31,36 @@ function url(path) {
   return `${API_BASE_URL}${path}`
 }
 
+function authHeader() {
+  const auth = getAuth()
+  return auth?.token ? { Authorization: `Bearer ${auth.token}` } : {}
+}
+
 export async function api(path, opts) {
   const res = await fetch(url(path), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
     ...opts,
   })
   return handle(res)
+}
+
+/* ---------- Auth ---------- */
+export const authApi = {
+  signup: (body) => api('/auth/signup', { method: 'POST', body: JSON.stringify(body) }),
+  login: (body) => api('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
+}
+export function getAuth() {
+  try {
+    const raw = localStorage.getItem('auth')
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+export function logout() {
+  localStorage.removeItem('auth')
+  window.location.hash = 'login'
 }
 
 /* ---------- Books ---------- */
