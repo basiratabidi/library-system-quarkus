@@ -7,4 +7,5 @@ public interface LendingService {
     List<LendingDTO> lendBook( String bookId, String memberId);
     LendingDTO returnBook(String lendingId);
     LendingDTO getLendingDetails(String lendingId);
+    List<LendingDTO> getLendingsByMember(String memberId);
 }

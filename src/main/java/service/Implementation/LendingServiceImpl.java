@@ -73,6 +73,13 @@ public class LendingServiceImpl implements service.LendingService {
         return toDTO(lending); 
     }
 
+    @Override
+    public List<LendingDTO> getLendingsByMember(String memberId) {
+        return Lending.<Lending>list("memberId", memberId).stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
+    }
+
     private LendingDTO toDTO(Lending lending){
         LendingDTO dto = new LendingDTO();
         dto.id= lending.id;

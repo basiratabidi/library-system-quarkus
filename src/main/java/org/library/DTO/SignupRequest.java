@@ -6,4 +6,5 @@ public class SignupRequest {
     public String name;
     public String email;
     public String phoneNumber;
+    public String role; //not null, either "USER" or "ADMIN"
 }

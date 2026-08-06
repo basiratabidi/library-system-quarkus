@@ -31,11 +31,13 @@ public class UserServiceImpl implements UserService {
             throw new WebApplicationException("Username already taken.", Response.Status.CONFLICT);
         }
 
+        String role = "ADMIN".equalsIgnoreCase(request.role) ? "ADMIN" : "USER";
+
         Member member = new Member();
         member.id = UUID.randomUUID().toString();
         member.username = request.username;
         member.passwordHash = BcryptUtil.bcryptHash(request.password);
-        member.role = "USER";
+        member.role = role;
         member.name = request.name != null && !request.name.isBlank() ? request.name : request.username;
         member.email = request.email;
         member.phoneNumber = request.phoneNumber;

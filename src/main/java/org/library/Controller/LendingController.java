@@ -48,6 +48,14 @@ public class LendingController {
     }
 
     @GET
+    @Path("/mine")
+    @RolesAllowed({"ADMIN", "USER"})
+    public Response getMyLendings() {
+        String memberId = jwt.getSubject();
+        return Response.ok(lendingService.getLendingsByMember(memberId)).build();
+    }
+
+    @GET
     @Path("/{lendingId}")
     @RolesAllowed({"ADMIN", "USER"})
     public Response getLendingDetails(@PathParam("lendingId") String lendingId) {
